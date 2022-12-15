@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:statefull_widget/widget/Convert.dart';
 import 'package:statefull_widget/widget/Input.dart';
 import 'package:statefull_widget/widget/Result.dart';
+import 'package:statefull_widget/widget/DropdownKonversi.dart';
+import 'package:statefull_widget/widget/RiwayatKonversi.dart';
 
 void main() {
   runApp(MyApp());
@@ -14,22 +17,34 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
-  TextEditingController _inputUser = new TextEditingController();
-  double _inputCelcius = 0;
+  double _inputUser = 0;
   double _kelvin = 0;
   double _reamur = 0;
+  var listItem = ["Kelvin", "Reamur"];
+  final inputController = TextEditingController();
+  String _newValue = "Kelvin";
+  double _result = 0;
+  List<String> listViewItem = <String>[];
+  dropdownOnChanged(changeValue) {
+    setState(() {
+      _newValue = changeValue;
+    });
+  }
+
   void convert() {
     setState(() {
-      _inputCelcius = double.parse(_inputUser.text);
-      _reamur = 4 / 5 * _inputCelcius;
-      _kelvin = _inputCelcius + 273;
+      _inputUser = double.parse(inputController.text);
+      if (_newValue == "Kelvin")
+        _result = _inputUser + 273;
+      else
+        _result = (4 / 5) * _inputUser;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Jasmin Salsabila arifah/2041720097',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         visualDensity: VisualDensity.adaptivePlatformDensity,
@@ -45,14 +60,21 @@ class _MyAppState extends State<MyApp> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Input(inputUser: _inputUser),
-              Result(kelvin: _kelvin, reamur: _reamur),
+              Input(inputUser: inputController),
+              DropdownKonversi(
+                  listItem: listItem,
+                  newValue: _newValue,
+                  dropdownOnChanged: dropdownOnChanged),
+              Result(result: _result),
+              Convert(convert: convert),
               Container(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                    onPressed: convert, child: Text("Konversi Suhu")),
+                margin: EdgeInsets.only(top: 10, bottom: 10),
+                child: Text(
+                  "Riwayat Konversi",
+                  style: TextStyle(fontSize: 20),
+                ),
               ),
+              RiwayatKonversi(listViewItem: listViewItem),
             ],
           ),
         ),
